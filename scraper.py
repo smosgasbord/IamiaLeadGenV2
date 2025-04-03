@@ -1,8 +1,8 @@
 from googlesearch import search
 from utils import guess_email_from_name, clean_name, ai_guess_email
 
-def fallback_scrape_leads(company, role, company_domain):
-    query = f'site:mx.linkedin.com/in "{company}" "{role}"'
+def fallback_scrape_leads(company, role, company_domain, country):
+    query = f'site:{country}.linkedin.com/in "{company}" "{role}"'
     try:
         results = list(search(query, num_results=30))
     except Exception as e:

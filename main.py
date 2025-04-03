@@ -13,15 +13,23 @@ st.logo('https://msgsndr-private.storage.googleapis.com/companyPhotos/188dfebd-9
 st.title("IamiaLeadGen")
 st.subheader("Generacion de Leads Impulsada con AI")
 st.write("Ingresa una empresa y el puesto objetivo para descubrir al instante contactos relevantes con enlaces verificados de LinkedIn y estimaciones inteligentes de correo electrónico. Utiliza la calificación impulsada por IA para priorizar los contactos de mayor impacto, ordena/filtra según tus necesidades y descarga los resultados en un archivo CSV listo para usar.")
+
 st.divider()
+
 company = st.text_input("Nombre de la compania")
 role = st.text_input("Rol de los usuarios en la compania")
 company_domain = st.text_input("Dominio Principal")
+country = st.selectbox("Selecciona un país", 
+                      options=['www', 'ar', 'mx', 'co'],
+                      format_func=lambda x: {'www': 'Default', 
+                                           'ar': 'Argentina',
+                                           'mx': 'México', 
+                                           'co': 'Colombia'}[x])
 #pitch = st.text_area("Your Outreach Pitch (used in Message drafts)")
 
 if st.button("Generar Leads"):
 
-    raw_leads = fallback_scrape_leads(company, role, company_domain)
+    raw_leads = fallback_scrape_leads(company, role, company_domain, country)
 
     if not raw_leads:
         st.warning("No leads found. Try adjusting your input.")
@@ -46,6 +54,7 @@ if st.button("Generar Leads"):
         st.session_state["company"] = company
         st.session_state["role"] = role
         st.session_state["company_domain"] = company_domain
+        st.session_state['country'] = country
         st.success("Sus leads han sidos generados con exito.")
 
 # Display leads if present in session state
