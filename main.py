@@ -20,9 +20,10 @@ company = st.text_input("Nombre de la compania")
 role = st.text_input("Rol de los usuarios en la compania")
 company_domain = st.text_input("Dominio Principal")
 country = st.selectbox("Selecciona un país", 
-                      options=['www', 'ar', 'mx', 'co'],
+                      options=['www', 'ar', 'cl', 'mx', 'co'],
                       format_func=lambda x: {'www': 'Default', 
                                            'ar': 'Argentina',
+                                           'cl': 'Chile',
                                            'mx': 'México', 
                                            'co': 'Colombia'}[x])
 #pitch = st.text_area("Your Outreach Pitch (used in Message drafts)")
