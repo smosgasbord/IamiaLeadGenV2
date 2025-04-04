@@ -115,7 +115,6 @@ def cross_ref_gpt(name, company, target_role):
         print(f"Cross-referencing unavailable!")
         return 0
         
-
 def score_lead(lead, target_role):
     score = 0
     email = lead.get("Best Email Guess", "")
