@@ -30,7 +30,6 @@ def search_empresa(tipo_empresa, ubicacion_empresa):
             
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # email
             email = None
             # hay emails en beatifull soup?
             for text in soup.stripped_strings:

@@ -16,7 +16,7 @@ with st.sidebar:
     st.sidebar.markdown("---")
     selected_option = st.sidebar.radio(
         "Que deseas hacer?",
-        ["Extraer Leads", "Buscar Empresas", "Configuración"],
+        ["Extraer Leads", "Buscar Empresas"],
         index=0,
         key="sidebar_option"
     )
