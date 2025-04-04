@@ -9,8 +9,10 @@ st.set_page_config(
     page_icon='https://msgsndr-private.storage.googleapis.com/companyPhotos/188dfebd-9007-4256-b8f5-c989d447d2da.png'
 )
 
-st.sidebar.image('https://msgsndr-private.storage.googleapis.com/companyPhotos/188dfebd-9007-4256-b8f5-c989d447d2da.png', width=100)
+st.sidebar.image('https://msgsndr-private.storage.googleapis.com/companyPhotos/188dfebd-9007-4256-b8f5-c989d447d2da.png', width=75)
 st.sidebar.title("Extrae Leads o busca empresas")
+
+# SIDEBAR SETUP
 
 with st.sidebar:
     st.sidebar.markdown("---")
