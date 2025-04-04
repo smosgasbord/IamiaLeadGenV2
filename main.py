@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 st.sidebar.image('https://msgsndr-private.storage.googleapis.com/companyPhotos/188dfebd-9007-4256-b8f5-c989d447d2da.png', width=75)
-st.sidebar.title("Extrae Leads o busca empresas")
+st.sidebar.title("IAMIA LeadGenAI")
 
 # SIDEBAR SETUP
 
@@ -27,7 +27,7 @@ with st.sidebar:
 ## LEADS EXTRACTION FUNCTIONALITY
 
 if selected_option == "Extraer Leads":
-    st.title("IAMIA LeadGenAI")
+    st.title("Extraer Leads")
     st.subheader("Generacion de Leads Impulsada con AI")
     st.write("Ingresa una empresa y el puesto objetivo para descubrir al instante contactos relevantes con enlaces verificados de LinkedIn y estimaciones inteligentes de correo electrónico. Utiliza la calificación impulsada por IA para priorizar los contactos de mayor impacto, ordena/filtra según tus necesidades y descarga los resultados en un archivo CSV listo para usar.")
 
