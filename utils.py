@@ -5,22 +5,29 @@ from openai import OpenAI
 from openai.types.chat import ChatCompletionMessage
 from openai.types.chat.chat_completion import ChatCompletion
 from openai import OpenAIError
+import requests
 from dotenv import load_dotenv
+import time
 
 # Use env var or fallback
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def ai_guess_email(name, company_domain, company_name):
+URL_BASE_TRUE = "https://api.truelist.io/api/v1/verify_inline"
+TRUE_API_KEY = os.getenv("TRUE_LIST_API_KEY")
+
+def ai_guess_email(name, company_domain, company_name, example_email):
     try:
         prompt = (
-            f"Generate 20 possible corporate email addresses for this person considering their name, company domain, company name."
+            f"Generate 10 possible corporate email addresses for this person considering their name, company domain, company name and example email [if is provided]."
             f"Format: Return ONLY a comma-separated list of emails, nothing else."
             f"Remove any Spanish accents or special characters."
-            f"Example format: first.last@domain.com, flast@domain.com, firstl@domain.com, first@domain.com, last@domain.com, last.first@domain.com, lastf@domain.com, f.last@domain.com, first_last@domain.com, first-last@domain.com, fmlast@domain.com, firstmlast@domain.com, last.first@company_name.com, first@companyname.com, last@companyname.com, firstinitial.lastname@domain.com, f.l@domain.com"
-            f"\n\nName: {name}"
+            f"Example format if example email is not provided use the values {name}, {company_domain}, {company_name} to create new possibles emails: first.last@domain.com, flast@domain.com, firstl@domain.com, first@domain.com, last@domain.com, last.first@domain.com, lastf@domain.com, f.last@domain.com, first_last@domain.com, first-last@domain.com, fmlast@domain.com, firstmlast@domain.com, last.first@company_name.com, first@companyname.com, last@companyname.com, firstinitial.lastname@domain.com, f.l@domain.com if you knows others possibilities please use them."
+            f"\nIf the example email is provided, use it to create new possibles emails: {example_email} using the person name"
+            f"\nName: {name}"
             f"\nDomain: {company_domain}"
-            f"\nDomain: {company_name}"
+            f"\nCompany name: {company_name}"
+            f"\nExample Email: {example_email}"
         )
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -114,7 +121,26 @@ def cross_ref_gpt(name, company, target_role):
     except Exception:
         print(f"Cross-referencing unavailable!")
         return 0
-        
+
+def validate_lead_role(name, company, target_role, data):
+    try:
+        prompt = (
+            f"Evaluate whether someone called {name}, works as a {target_role}, at {company}. using this data {data} as main informations"
+            """If you are 100% sure that they work the person works there return just the number: 1.
+            If you are 100% sure that they do not work there then return just the number: -1.
+            Else return just the number: 0.""" 
+        )
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+            max_tokens=1,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception:
+        print(f"Cross-referencing unavailable!")
+        return 0
+
 def score_lead(lead, target_role):
     score = 0
     email = lead.get("Best Email Guess", "")
@@ -176,3 +202,35 @@ def clean_name(raw_name):
     full_name = f"{name.first} {name.last}".strip()
     full_name = validate_and_format_name(full_name)
     return full_name if full_name else None
+
+def simple_email_validator(email: str) -> bool:
+    if not email:
+        return False
+    if email:
+        try:
+            response = requests.post(URL_BASE_TRUE, headers={'Authorization': TRUE_API_KEY}, params={"email": email})
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    email_info = data['emails'][0]
+                    email_state = email_info['email_state']
+                    email_substate = email_info['email_sub_state']
+                    time.sleep(11)
+                    if email_state == 'ok' and email_substate == 'email_ok':
+                        return True
+                    else:
+                        return False
+            else:
+                print(f"Error: {response.status_code} - {response.text}")
+                return False
+        except requests.RequestException as e:
+            print(f"Request error: {e}")
+            return False
+        
+def batches_email_validator(emails: list) -> list:
+    valid_emails = []
+    for email in emails:
+        if simple_email_validator(email):
+            valid_emails.append(email)
+            time.sleep(11)
+    return valid_emails
