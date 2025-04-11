@@ -208,14 +208,13 @@ def simple_email_validator(email: str) -> bool:
         return False
     if email:
         try:
-            response = requests.post(URL_BASE_TRUE, headers={'Authorization': TRUE_API_KEY}, params={"email": email})
+            response = requests.post(URL_BASE_TRUE, headers={'Authorization': TRUE_API_KEY}, params={"email": email}, timeout=8)
             if response.status_code == 200:
                 data = response.json()
                 if data:
                     email_info = data['emails'][0]
                     email_state = email_info['email_state']
                     email_substate = email_info['email_sub_state']
-                    time.sleep(11)
                     if email_state == 'ok' and email_substate == 'email_ok':
                         return True
                     else:
@@ -232,5 +231,4 @@ def batches_email_validator(emails: list) -> list:
     for email in emails:
         if simple_email_validator(email):
             valid_emails.append(email)
-            time.sleep(11)
     return valid_emails
